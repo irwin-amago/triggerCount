@@ -20,17 +20,27 @@ uploaded_json = st.file_uploader('Please Select Project JSON file in the DATA fo
 uploaded = False
 
 if uploaded_json is not None:
-    uploaded = True
+    if uploaded_json.name.lower().endswith('.json'):
+        uploaded = True
+    else:
+        msg = 'Please upload a JSON file.'
+        st.error(msg)
+        st.stop()
 
 if uploaded:
-    
-    st.success('JSON File Uploaded.')
     
     # Parse and Visualize JSON
       
     data = json.load(uploaded_json)
-    triggers = data['flights'][0]['geotag']
-    trigger_count = len(triggers)
+    try:
+        triggers = data['flights'][0]['geotag']
+        trigger_count = len(triggers)
+    except:
+        msg = 'Please upload a valid Wingtra JSON file.'
+        st.error(msg)
+        st.stop()
+    
+    st.success('JSON File Uploaded.')
     
     st.subheader('There are ' + str(trigger_count) + ' triggers.')
     
@@ -59,6 +69,5 @@ if uploaded:
              ),
              ],
          ))
-    
-    
-    
+else:
+    st.stop()
